@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+Create a project with: npx create-next-app@latest
+
+Then inside the project folder type:
+
+npm install @supabase/supabase-js
+
 ## Getting Started
 
 First, run the development server:
