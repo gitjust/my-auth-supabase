@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
 export default function Signup() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useState<string>('');
-  const [successMsg, setSuccessMsg] = useState<string>('');
-
-  const handleSignup = async (e: FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
@@ -28,47 +27,56 @@ export default function Signup() {
       setErrorMsg(error.message);
       setLoading(false);
     } else {
-      setLoading(false);
-      setSuccessMsg('Signup successful! Please check your email to confirm your account.');
-      // Optionally redirect to login after a delay:
+      setSuccessMsg('Signup successful! Please check your email for confirmation.');
+      setEmail('');
+      setPassword('');
       setTimeout(() => {
-        router.push('/login');
+        router.push('/login'); // Redirect to login after successful signup
       }, 4000);
     }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: 'auto', padding: '2rem' }}>
-      <h1>Create a new account</h1>
-      <form onSubmit={handleSignup}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ width: '100%', padding: 8, marginBottom: 16 }}
-        />
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <h2 className="text-2xl font-semibold text-center mb-6">Sign Up</h2>
+        <form onSubmit={handleSignup}>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-2">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-3 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: '100%', padding: 8, marginBottom: 16 }}
-        />
+          <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-3 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
-        <button type="submit" disabled={loading} style={{ padding: 10, width: '100%' }}>
-          {loading ? 'Signing up...' : 'Sign Up'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 focus:outline-none"
+          >
+            {loading ? 'Signing up...' : 'Sign Up'}
+          </button>
+        </form>
 
-      {errorMsg && <p style={{ color: 'red', marginTop: 16 }}>{errorMsg}</p>}
-      {successMsg && <p style={{ color: 'green', marginTop: 16 }}>{successMsg}</p>}
+        {successMsg && <p className="mt-4 text-green-500 text-center">{successMsg}</p>}
+        {errorMsg && <p className="mt-4 text-red-500 text-center">{errorMsg}</p>}
+      </div>
     </div>
   );
 }
