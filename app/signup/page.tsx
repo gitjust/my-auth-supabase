@@ -8,30 +8,39 @@ export default function Signup() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setErrorMsg('');
     setSuccessMsg('');
 
-    const { data, error } = await supabase.auth.signUp({
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords don't match!");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await supabase.auth.signUp({
       email,
       password,
     });
 
+    setLoading(false);
+
     if (error) {
       setErrorMsg(error.message);
-      setLoading(false);
     } else {
       setSuccessMsg('Signup successful! Please check your email for confirmation.');
       setEmail('');
       setPassword('');
+      setConfirmPassword('');
       setTimeout(() => {
-        router.push('/login'); // Redirect to login after successful signup
+        router.push('/login'); // Redirect to login after signup success
       }, 4000);
     }
   };
@@ -62,6 +71,20 @@ export default function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            minLength={6}
+            className="w-full p-3 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 mb-2">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            minLength={6}
             className="w-full p-3 mb-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
